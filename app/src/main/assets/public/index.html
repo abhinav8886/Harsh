@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <script>
+      // AI Studio preview environment: HMR is disabled in cloud containers.
+      // Mock vite-hmr WebSocket cleanly to prevent "WebSocket closed without opened" errors.
+      (function() {
+        if (typeof window === 'undefined') return;
+        var NativeWebSocket = window.WebSocket;
+        if (NativeWebSocket) {
+          window.WebSocket = function(url, protocols) {
+            var isViteHmr = protocols === 'vite-hmr' || (typeof url === 'string' && (url.includes('@vite') || url.includes('token=')));
+            if (isViteHmr) {
+              var target = new EventTarget();
+              target.binaryType = 'blob';
+              target.readyState = 1; // WebSocket.OPEN
+              target.bufferedAmount = 0;
+              target.extensions = '';
+              target.protocol = 'vite-hmr';
+              target.url = String(url);
+              target.onopen = null;
+              target.onclose = null;
+              target.onerror = null;
+              target.onmessage = null;
+              target.send = function() {};
+              target.close = function() {
+                target.readyState = 3;
+                if (typeof target.onclose === 'function') target.onclose(new Event('close'));
+              };
+              setTimeout(function() {
+                var openEvt = new Event('open');
+                if (typeof target.onopen === 'function') target.onopen(openEvt);
+                target.dispatchEvent(openEvt);
+              }, 0);
+              return target;
+            }
+            return new NativeWebSocket(url, protocols);
+          };
+          window.WebSocket.prototype = NativeWebSocket.prototype;
+          window.WebSocket.CONNECTING = 0;
+          window.WebSocket.OPEN = 1;
+          window.WebSocket.CLOSING = 2;
+          window.WebSocket.CLOSED = 3;
+        }
+
+        // Global safety net for unhandled Vite WebSocket errors
+        window.addEventListener('unhandledrejection', function(event) {
+          if (event && event.reason) {
+            var errStr = String(event.reason.message || event.reason || '');
+            var stackStr = String(event.reason.stack || '');
+            if (errStr.includes('WebSocket') || stackStr.includes('@vite/client')) {
+              event.preventDefault();
+              event.stopImmediatePropagation();
+            }
+          }
+        }, true);
+
+        window.addEventListener('error', function(event) {
+          if (event) {
+            var msg = String(event.message || '');
+            var filename = String(event.filename || '');
+            if (msg.includes('WebSocket') || filename.includes('@vite/client')) {
+              event.preventDefault();
+              event.stopImmediatePropagation();
+              return true;
+            }
+          }
+        }, true);
+      })();
+    </script>
+    <title>Harsh's Olympiad Lab</title>
+    <meta name="description" content="Mobile-first CBSE Class 6 and Maths Olympiad preparation platform powered by Google Sheets, Google Docs question banks, and private Google Drive photo & worksheet vaults." />
+    <meta property="og:title" content="Harsh's Olympiad Lab" />
+    <meta property="og:description" content="Mobile-first CBSE Class 6 and Maths Olympiad preparation platform powered by Google Sheets, Google Docs question banks, and private Google Drive photo & worksheet vaults." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="theme-color" content="#0B192C" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="OlympiadLab" />
+    <link rel="icon" type="image/svg+xml" href="./icon.svg" />
+    <link rel="icon" type="image/png" sizes="192x192" href="./pwa-192x192.png" />
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;0,6..72,700;1,6..72,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script type="module" crossorigin src="./assets/index-CB4nu5U-.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-DUqPL0Yy.css">
+  <link rel="manifest" href="./manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="./registerSW.js"></script></head>
+  <body class="bg-[#FAF7F2] text-[#1C2536] antialiased font-sans selection:bg-[#EAE0D0] selection:text-[#0B192C]">
+    <div id="root"></div>
+  </body>
+</html>
