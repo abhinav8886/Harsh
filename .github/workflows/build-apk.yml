@@ -23,17 +23,26 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: npm
+
+      - name: Verify project files
+        run: |
+          echo "Checking project structure..."
+          ls -la
+          test -f package.json || {
+            echo "ERROR: package.json not found in repository root."
+            exit 1
+          }
+          test -d android || {
+            echo "ERROR: android folder not found."
+            exit 1
+          }
 
       - name: Install Node dependencies
         run: |
           if [ -f package-lock.json ]; then
             npm ci
-          elif [ -f package.json ]; then
-            npm install
           else
-            echo "ERROR: package.json not found in repository root."
-            exit 1
+            npm install
           fi
 
       - name: Build web app and prepare Android assets
@@ -45,6 +54,7 @@ jobs:
           distribution: temurin
           java-version: '17'
           cache: gradle
+          cache-dependency-path: android/**/*.gradle*
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v4
@@ -65,11 +75,15 @@ jobs:
           chmod +x gradlew
           ./gradlew --no-daemon assembleDebug --stacktrace
 
-      - name: Find generated APK
+      - name: Verify generated APK
         run: |
-          echo "Searching for generated APK files..."
-          find android -type f -name "*.apk" -print
-          test -n "$(find android/app/build/outputs/apk/debug -type f -name '*.apk' -print -quit)"
+          APK_DIR="android/app/build/outputs/apk/debug"
+          if [ ! -d "$APK_DIR" ]; then
+            echo "ERROR: APK output directory not found."
+            exit 1
+          fi
+          find "$APK_DIR" -maxdepth 1 -type f -name "*.apk" -print
+          test -n "$(find "$APK_DIR" -maxdepth 1 -type f -name "*.apk" -print -quit)"
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
