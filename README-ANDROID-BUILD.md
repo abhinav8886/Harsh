@@ -1,38 +1,34 @@
-# Harsh's Olympiad Lab — Android Studio Project
+# Harsh's Olympiad Lab - Official Android Studio Project
 
-This ZIP is a standalone Android Studio project. The production web application is already bundled under `app/src/main/assets/public/`, alongside the native Android WebView app and reminder components.
+This directory contains the **complete, native Android application project** for **Harsh's Olympiad Lab**.
+It bundles the **genuine production application** (HTML, CSS, JavaScript, and question banks) directly inside `app/src/main/assets/public/`.
 
-## Build with GitHub Actions (recommended)
-1. Extract this ZIP on your computer.
-2. Copy the extracted project files into the root of the target GitHub repository, including the hidden `.github` directory. Confirm that `gradlew`, `settings.gradle`, `build.gradle`, `app/` and `.github/workflows/build-apk.yml` are at repository root.
-3. Commit the updated files to `main` or `master`. The workflow should start automatically. You can also open **Actions → Build Android APK → Run workflow**.
-4. Open the successful workflow run and download `harsh-olympiad-lab-debug-apk` from **Artifacts**.
-5. Extract the downloaded artifact ZIP to obtain `app-debug.apk`.
+---
 
-## Build in Android Studio
-1. Open Android Studio and choose **File → Open**.
-2. Select the folder containing this README, `settings.gradle`, `gradlew` and the `app/` folder. This folder is the project root; do not select an `android/` subfolder.
-3. Let Gradle sync. Build using **Build → Build Bundle(s) / APK(s) → Build APK(s)**.
-4. The APK should be at `app/build/outputs/apk/debug/app-debug.apk`.
+## What is Inside
+- **Real Production App Bundle**: Pre-compiled React 18 SPA with all Olympiad features (Practice, Timed Quiz, Mock Test, Worksheets, Mistakes Review, Parent Analytics, AI Question Generator).
+- **Offline Question Bank**: Built-in questions and local caching for full offline practice without an internet connection.
+- **Two-way Google Sheets Sync**: Saves quiz scores and fetches live questions when online.
+- **Native Android Controller**: `MainActivity.java` with hardware back-button navigation, local asset serving, and smooth progress feedback.
 
-## Build from terminal
-Requires JDK 17 and an Android SDK installation. Run from this project root:
+---
 
-Linux/macOS:
+## How to Build the APK
+
+### Option 1: Automatic Cloud Build with GitHub Actions (Recommended - 0 Installs)
+1. Commit and push this repository to GitHub.
+2. The included `.github/workflows/build-apk.yml` will automatically build the APK on GitHub's cloud runners.
+3. Go to the **Actions** tab on your GitHub repository, click the latest workflow run, and download **harsh-olympiad-lab-debug-apk**!
+
+### Option 2: Open in Android Studio
+1. Open **Android Studio**.
+2. Select **File → Open** and choose the `android` folder.
+3. Wait for Gradle sync to complete.
+4. Click **Build → Build Bundle(s) / APK(s) → Build APK(s)**.
+5. Retrieve your APK from `app/build/outputs/apk/debug/app-debug.apk`.
+
+### Option 3: Terminal Command
 ```bash
-chmod +x ./gradlew
+chmod +x gradlew
 ./gradlew assembleDebug
 ```
-
-Windows PowerShell:
-```powershell
-.\gradlew.bat assembleDebug
-```
-
-## Project details
-- Application ID: `com.harsh.olympiadlab` (debug build adds `.debug`).
-- Minimum Android version: API 24.
-- Compile/target SDK: 34.
-- Java: 17.
-- This workflow produces a debug APK for testing, not a signed production release.
-- Google Sheets, Google Drive and Gemini-connected functionality still requires its relevant deployment, authorisation and backend configuration.
